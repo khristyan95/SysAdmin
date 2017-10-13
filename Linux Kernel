@@ -1,0 +1,42 @@
+Linux Kernel este considerat unul dintre cele mai mari proiecte de tip open-source, cu ajutorul
+caruia putem gestiona super calculatoare si smartphoane.
+- Linux Kernel este un program care este numit "vmlinux-<Kernel VERSION>".
+- Este rulat de un bootloader, ca GRUB si are command-line parameters si GRUB este responsabil sa puie parametri necesari in KERNEL.
+- Linux Kernel este un API (Aplication Program Interface) care contine fisiere de tip: proc, sys, debugs. Deasemenea interactioneaza cu fisierele divice-urilor conectacte la PC(drivere). Kernelul este responsabil pentru permisiunile utilizatorilor.
+_________________________________________________________________________________________________
+
+uname -r   <= Vezi versiunea la LINUX KERNEL
+cd /boot   <= Mapa cu locatia LINUX KERNEL
+
+
+_________________________________________________________________________________________________
+
+/proc - inseamna process
+
+Fiecare proces este identificat dupa un PID
+
+_________________________________________________________________________________________________
+
+/sys - file system, in aceste fisiere este informatie despre hardware.
+
+_________________________________________________________________________________________________
+
+/dev - Drivers and Device Files
+
+
+GRUB - se porneste direct dupa incarcarea BIOS-ului, el este repartizat pe o partitie speciala a hardului. Apoi el incarca KERNELUL, root filesystem, kernel command line si apoi transfera tot controlul catre KERNEL.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
