@@ -1,0 +1,139 @@
+#Mai intii instalam ltsp-server-standlone
+apt-get update && apt-get install ltsp-server-standalone
+
+#Instalam sistema client cu ajutorul ltsp-build-client
+ltsp-build-client --dist xenial --arch i386 --fat-client-desktop lubuntu-desktop
+
+#Introducem urmatoarele optiuni in /etc/ltsp/ltsp-build-client.conf
+-----------------------------------------------------------------------------------------------
+# Distribution
+DIST=xenial
+# The chroot architecture.
+ARCH=i386
+
+# ubuntu-desktop and edubuntu-desktop are tested.
+# If you test with [k|x]ubuntu-desktop, edit this page and mention if it worked OK.
+# kubuntu lucid (10.10) working okay.
+FAT_CLIENT_DESKTOPS="lubuntu-desktop"
+
+# Space separated list of programs to install.
+# The java plugin installation contained in ubuntu-restricted-extras
+# needs some special care, so let's use it as an example.
+#LATE_PACKAGES="
+#    ubuntu-restricted-extras
+#    gimp
+#    nfs-client
+#"
+
+# This is needed to answer "yes" to the Java EULA.
+# We'll create that file in the next step.
+DEBCONF_SEEDS="/etc/ltsp/debconf.seeds"
+
+# This uses the server apt cache to speed up downloading.
+# This locks the servers dpkg, so you can't use apt on
+# the server while building the chroot.
+MOUNT_PACKAGE_DIR="/var/cache/apt/archives/"
+-------------------------------------------------------------------------------------------------
+
+#Cu ajutorul comenzii debootstrap sistema va trece in catalogul /opt/ltsp/i386.
+debootstrap
+
+# Pentru a instala aplicatii noi pe sistema, o facem cu ajutorul comenzii ltsp-chroot.
+ltsp-chroot  //Se foloseste numai la necesitate
+
+---------->DHCP<--------
+Articol pentru a configura
+https://www.opennet.ru/base/sys/ltsp_win2003.txt.html
+
+#DHCP-server este instalat automatcla instalarea ltsp-server-standalone
+/etc/default/isc-dhcp-server    //Configa la DHCP
+
+#Stergem DHCP si il instalam din nou
+sudo apt-get remove isc-dhcp-server
+
+#Acum adaugam la serverul DHCP 2 optiuni:
+next-server 192.168.1.2; # TFTP-сервер
+filename "/ltsp/i386/pxelinux.0"; # Загрузчик
+
+#Instalare Software
+ltsp-chroot
+Установка ПО
+https://habrahabr.ru/post/277783/
+
+
+#Crearea Utilizatorilor
+#Utilizatorii obisnuiti se creaza in mod standart:
+useradd -m -c "Cristian Sainciuc" -g users -s /bin/bash <username>
+passwd <username>
+
+#La dorinta crearea administratorului intr-e utilizatori
+ltsp-chroot
+useradd -g adm -G sudo -s /bin/bash -m <adminname>
+passwd <adminname>
+exit
+ltsp-update-image
+
+
+#Cel mai important config se afla in directoria:
+/var/lib/tftpboot/ltsp/i386/lts.conf
+
+---------------------------------------------------------------------------------------
+Конфиг поделен на секции, в секции Default описываются настройки общие для всех клиентов:
+
+[Default]
+# Сессия LXDE
+LDM_XSESSION    = /usr/bin/dbus-launch --exit-with-session /usr/bin/lxsession -s Lubuntu -e LXDE
+# Настройки локалей и системного языка
+LOCALE          = Europe/Moscow
+LC_ALL      = ru_RU.UTF-8
+LANG        = ru_RU.UTF-8
+LDM_LANGUAGE    = ru_RU.UTF_8
+# Настройка переключения клавиатуры и хоткеев
+XKBLAYOUT       = "us,ru"
+XKBOPTIONS      = "grp:ctrl_shift_toggle,terminate:ctrl_alt_bksp"
+X_NUMLOCK       = true
+KEYTABLE    = ru
+LDM_NUMLOCK     = true
+# Разрешаем флешки
+HOTPLUG     = True
+# Разрешаем локальные диски
+LOCALDEV        = true
+# Настраиваем звук и микрофон
+SOUND       = True
+MIC_VOLUME      = 0
+CAPTURE_VOLUME  = 100
+CAPTURE_SWITCH  = toggle
+# Включаем поддержку SSH
+RCFILE_01       = "ssh-keygen -A ; /usr/sbin/sshd"
+# Настраиваем сбор логов
+SYSLOG_HOST     = server
+
+Также можно добавить секции для отдельных клиентов, на основе hostname, IP или MAC-адреса:
+
+# Настройка графики
+[oldmachine]
+X_COLOR_DEPTH=8
+X_MODE_0=800x600
+
+# Включить автологин
+[192.168.1.123]
+LDM_AUTOLOGIN = True
+LDM_USERNAME  = user
+LDM_PASSWORD  = password
+
+# Принт-сервер
+[00:11:25:93:CF:00]
+PRINTER_0_DEVICE=/dev/usblp0
+SCREEN_07=shell
+
+# FreeRDP, вместо стандартной оболочки
+[00:11:25:93:CС:11]
+SCREEN_07=xfreerdp
+RDP_SERVER=192.168.100.10
+RDP_OPTIONS="/f /sec:rdp /cert-ignore /multimon:force"
+
+Вообще полный список опций вы можете найти на этой странице, или в
+
+man lts.conf
+---------------------------------------------------------------------------------------------------------------
+

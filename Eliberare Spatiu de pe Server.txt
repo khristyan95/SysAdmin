@@ -1,0 +1,7 @@
+Mergi in directoria:
+
+C:\Program Files\Delprof 2. 1.6
+
+Rulezi fisierul .exe, doar il scrii pe el in linia de comanda>
+
+.\DelProf2.exe /u /d:3

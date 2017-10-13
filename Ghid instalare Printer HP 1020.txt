@@ -1,0 +1,16 @@
+
+sudo apt-get install alien dpkg-dev debhelper build-essential -y
+sudo apt-get install cups-common
+sudo apt-get install portreserve
+sudo apt-get install cups
+
+nano /etc/cups/cupsd.conf       <======== Adauga Ip, si allow 192.168.0.0/16
+
+Install printer Driver:
+
+wget https://kent.dl.sourceforge.net/project/hplip/hplip/3.17.6/hplip-3.17.6.run
+
+GUI <=== Printer/ permite ca printerul sa fie conectat
+
+/etc/init.d/cups restart
+init 6   <=====restart PC

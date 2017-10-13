@@ -1,0 +1,72 @@
+wget http://download.virtualbox.org/virtualbox/5.0.26/virtualbox-5.0_5.0.26-108824~Ubuntu~wily_amd64.deb
+
+wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+
+apt-get install dkms
+
+nano /etc/apt/sources.list
+deb http://download.virtualbox.org/virtualbox/debian xenial contrib
+apt-get install virtualbox-5.0
+
+
+
+wget http://download.virtualbox.org/virtualbox/5.0.26/Oracle_VM_VirtualBox_Extension_Pack-5.0.26-108824.vbox-extpack
+
+VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-5.0.26-108824.vbox-extpack 
+
+scp Windows7x64-disk1.vmdk root@192.168.123.62:"/root"
+scp Windows7x64.ovf root@192.168.84.4:"/root"
+
+VBoxManage import Windows7x64.ovf
+
+
+VBoxManage startvm "Windows7x64" --type headless
+
+
+VBoxManage modifyvm "Windows7x64" --vrde on
+
+VBoxManage export Windows7x64 --output Windows7x64.ovf
+
+
+VBoxManage list usbhost
+UUID e3117adf-e0f2-4335-9259-b7d820f1c44e
+
+VBoxManage controlvm Windows7x64 usbattach 09dbafb8-d819-41a5-99c6-40962b240a1a
+
+
+VBoxManage showvminfo Windows7x64
+
+VBoxManage usbfilter add 1 --target Windows7x64 --name Canon --vendorid 0x04a9 --productid 0x2773
+
+
+
+
+sudo nano /etc/init.d/StartVM && sudo chmod +x /etc/init.d/StartVM && sudo update-rc.d StartVM defaults 99 01
+
+#! /bin/sh
+# Start VirtualBox @boot 
+# /etc/init.d/StartVM
+#
+
+#Edit these variables!
+VMUSER=root
+VMNAME=Windows7x64
+
+
+case "$1" in
+  start)
+    echo "Starting VirtualBox VM ..."
+    sudo -u $VMUSER VBoxHeadless --startvm $VMNAME &
+    ;;
+  stop)
+    echo "Saving state of Virtualbox VM ..."
+    sudo -u $VMUSER VBoxManage controlvm $VMNAME savestate
+    ;;
+  *)
+    echo "Usage: /etc/init.d/StartVM {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0

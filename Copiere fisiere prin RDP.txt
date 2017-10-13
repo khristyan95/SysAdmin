@@ -1,0 +1,4 @@
+1) run si introduci:
+\\w100\RoamingProfile\csainciuc\Desktop
+
+2) Accesezi de pe alt server si le copii

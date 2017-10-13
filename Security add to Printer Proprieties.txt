@@ -1,0 +1,7 @@
+1) run (Ctrl+R) si scrii Regedit    <<<
+
+2) Deschizi HKEY_CURRENT_USER
+
+3) Mergi in directoria HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer /v Nosecuritytab /t REG_DWORD /d 0 /f
+
+4) Deschizi NoSecure si adauga 0

@@ -1,0 +1,2 @@
+Stingi Firewallul pe localhost, apoi de pe terminal te conectezi pe IP la PC nu uita sa sharuiesti printerul, si de akolo 
+iti apare si il instalezi.
